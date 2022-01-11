@@ -13,6 +13,7 @@ from matplotlib import pyplot as plt
 
 
 def mc_error_analysis(windows, data):
+    bootstrapfile = open("bootstraps.pmf", "w")
 
     num_bins = sim.num_bins
     num_windows = sim.num_windows
@@ -52,7 +53,7 @@ def mc_error_analysis(windows, data):
             fw.max = np.max(np.nonzero(fw.hist[:,1]))
             fw.hist = fw.hist[fw.min:fw.max+1,:]
             fw.hist[:,2] = np.cumsum(fw.hist[:,1])/fw.num_points
-            
+
             fakeset += [fw]
 
         fake_g0 = np.array([window.g for window in windows])
@@ -67,6 +68,8 @@ def mc_error_analysis(windows, data):
         ave_g += fake_g
         ave_g2 += fake_g**2
 
+        # store each bootstrap result
+        bootstrapfile.write(" ".join(map(str,fakedata[:,3]))+"\n")
         update_progress("MC error analysis", (i+1)/num_mc_runs)
 
     ave_p /= num_mc_runs
@@ -82,6 +85,9 @@ def mc_error_analysis(windows, data):
 
     mc_time = time.time() - start_time
     print(ave_p2[-1], ave_pdf2[-1], ave_g2[-1], mc_time)
+
+    bootstrapfile.close()
+
     return ave_p2, ave_pdf2, ave_g2, mc_time
 
 
@@ -129,11 +135,14 @@ def varfit(x, a, b):
 
 def block_analysis(windows, data):
 
+    if sim.linear:
+        raise IndexError("block analysis not yet implemented for linear bias")
+
     num_bins = sim.num_bins
     num_windows = sim.num_windows
     dr = 20.0
     kT = sim.kT
-    
+
     start_time = time.time()
     xbar = np.zeros(num_windows)
     varx = np.zeros(num_windows)
@@ -221,11 +230,11 @@ def split_analysis(windows, data):
             splitw.max = np.max(np.nonzero(splitw.hist[:,1]))
             splitw.hist = splitw.hist[splitw.min:splitw.max+1,:]
             splitw.hist[:,2] = np.cumsum(splitw.hist[:,1])/splitw.num_points
-            
+
             splitset += [splitw]
-        
+
         split_g, split_time = minimization(splitset, splitdata)
-        
+
         G[:,i] = split_g
         P[:,i], A[:,i], bm = calc_free(split_g, splitset, splitdata)
 

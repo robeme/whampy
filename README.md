@@ -33,25 +33,17 @@ shown in the `example/example.traj` file.
 For more information about the options, the `[-h]` optional flag brings up
 the help text.
 
-## Test execution
+# How to WHAM for constant potential
 
-A simple calculation of the potential of mean force of the rotation of
-the C2-C3 dihedral angle of butane is provided for testing purposes.
+I've adapted the original whampy code of enfo14 () WHAM code (see the subfolder `wham/`) to account for a linear bias potential activated by setting the linear bias flag in the metafile.
 
-To execute the test, the following command suffices:
+* reformat input data to format in conp/input/traj.*
+* adapt simulation parameters in wham.in to account for your simulation setup. a summary of all available settings is found in /wham/symdata.py
+* use flag `#linear = True` in the metafiles to activate linear bias potential. This interprets the second column in the metafile paths definitions as an applied electrostatic potential.
+* run `wham.py -i conp/wham.in -o wham_output` to do the WHAM.
+* output is at 0.0V. however, one can make use of the fact that generally, the distribution, P(σ), shifts according to applied voltage P(σ|ΔΨ) ∝ P(σ|0V) exp(−σSΔΨ/(kB*T)) (see eq. (3) Merlet, C. et al. The Electric Double Layer Has a Life of Its Own. J. Phys. Chem. C 118, 18291–18298 (2014). This is done in the Jupyter notebook.
+* if MC is activated with `#num_mc_runs = 2000` to estimate the confidence, a file containing the bootsrapped PMFs for post processing is stored under `bootstraps.pmf`.
 
-``` shell
-python3 wham.py -i example/input/example.in -o example/output/test
-```
+## Still need to do
 
-The results of the PMF will then be stored in `example/output/test.pmf`,
-with the reaction coordinate in the first column, the PMF value in the
-second column, and the standard error of the PMF value in the third.
-
-Plotting these results with the first column at the x-axis and the second
-column at the y-axis will produce results equivalent to those contained
-in the provided .png file.
-
-=======
-
-The 'montecarlo' branch includes a modified version of the code that also generates a dataset with Monte Carlo, useful for testing.
+* adapt block-averaging linear potential (there is a spring dependence, which I don't understood yet)

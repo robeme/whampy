@@ -14,13 +14,16 @@ from scipy import optimize
 from matplotlib import pyplot as plt
 
 def calc_bias(spring, loc, coor):
-    dx = coor - loc
-    if sim.periodic:
-        period = sim.period
-        dx = abs(dx)
-        if dx > period/2.0:
-            dx -= period
-    return 0.5*spring*dx**2
+    if sim.linear:
+        return coor * loc * -1 
+    else:
+        dx = coor - loc
+        if sim.periodic:
+            period = sim.period
+            dx = abs(dx)
+            if dx > period/2.0:
+                dx -= period
+        return 0.5*spring*dx**2
 
 
 def function_A(g, *args):
@@ -37,7 +40,7 @@ def function_A(g, *args):
 
     for l in range(num_bins):
         coor = data[l, 0]
-        Ml = data[l,1] 
+        Ml = data[l,1]
 
         bias = [calc_bias(winlist[i].spring, winlist[i].loc, coor)
                 for i in range(num_windows)]
@@ -92,7 +95,7 @@ def calc_free(g, winlist, data):
 
     prob = np.zeros(num_bins)
     free = np.zeros(num_bins)
-    
+
     for l in range(num_bins):
         coor = data[l,0]
         Ml = data[l,1]
@@ -114,7 +117,7 @@ def calc_free(g, winlist, data):
     return prob, free, bin_min
 
 
-def minimization(windows, data): 
+def minimization(windows, data):
 
     tol = sim.tol
 
@@ -128,10 +131,10 @@ def minimization(windows, data):
         arglist = (windows, data)
 
         g_minim = optimize.minimize(
-                function_A, g0, 
-                args=arglist, 
-                jac=gradient_A, 
-                method="BFGS", 
+                function_A, g0,
+                args=arglist,
+                jac=gradient_A,
+                method="BFGS",
                 options={"gtol": tol})
 
         if g_minim.get("success"):
@@ -146,9 +149,9 @@ def minimization(windows, data):
                     "Stopping...")
             print(text)
             sys.exit()
-    
+
     for i in range(len(g)):
         windows[i].g = g[i]
-    
+
     min_time = time.time() - start_time
     return g, min_time

@@ -11,8 +11,6 @@ import numpy as np
 import argparse
 from operator import attrgetter
 
-k_B = 0.0019872041
-
 class Logger(object):
     def __init__(self, logfile, quiet=False):
         self.terminal = sys.stdout
@@ -24,7 +22,7 @@ class Logger(object):
             self.terminal = open(os.devnull, "w")
 
     def write(self, message):
-        if not self.quiet: 
+        if not self.quiet:
             self.terminal.write(message)
         self.log.write(message)
 
@@ -73,7 +71,7 @@ def print_help():
             "\t-h, --help   \t display this help text and exit\n"
             "\t-v, --version\t display version information and exit\n"
             "\t-s, --silent \t suppress standard output\n")
-    
+
     out = sys.__stdout__.write(text)
     sys.exit()
 
@@ -81,18 +79,18 @@ def print_help():
 
 def parse_command(argv):
     argc = len(argv)
-    
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-s", "--silent",
                         help="suppress standard output",
                         action="store_true")
 
-    parser.add_argument("-i", "--input", 
+    parser.add_argument("-i", "--input",
                         type=str, default="whampy.in",
                         help="path to input file")
 
-    parser.add_argument("-o", "--output", 
+    parser.add_argument("-o", "--output",
                         type=str, default="whampy",
                         help="prefix of output files")
 
