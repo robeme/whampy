@@ -33,7 +33,7 @@ shown in the `example/example.traj` file.
 For more information about the options, the `[-h]` optional flag brings up
 the help text.
 
-## Example: how to WHAM for constant potential
+## Example: Using WHAM in constant potential simulations
 
 I've adapted the original whampy code of enfo14 (https://github.com/enfo14/whampy) (details are found in the subfolder `wham/`) to account for a linear bias potential activated by setting the linear bias flag in the metafile.
 
