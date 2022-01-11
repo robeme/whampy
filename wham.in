@@ -1,0 +1,19 @@
+# hist_min = -0.7
+# hist_max = 4.0
+# num_bins = 100
+# tol = 1e-9
+# temp = 298.0
+# linear = True
+# bayesian = False
+# num_mc_runs = 2000
+
+traj/window1.traj  0.00
+traj/window2.traj  0.20
+traj/window3.traj  0.50
+traj/window4.traj  0.75
+traj/window5.traj  1.00
+traj/window6.traj  1.25
+traj/window7.traj  1.50
+traj/window8.traj  1.75
+traj/window9.traj  1.85
+traj/window10.traj 2.00
