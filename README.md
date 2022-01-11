@@ -33,11 +33,11 @@ shown in the `example/example.traj` file.
 For more information about the options, the `[-h]` optional flag brings up
 the help text.
 
-## How to WHAM for constant potential
+## Example: how to WHAM for constant potential
 
-I've adapted the original whampy code of enfo14 () WHAM code (see the subfolder `wham/`) to account for a linear bias potential activated by setting the linear bias flag in the metafile.
+I've adapted the original whampy code of enfo14 (https://github.com/enfo14/whampy) (details are found in the subfolder `wham/`) to account for a linear bias potential activated by setting the linear bias flag in the metafile.
 
-* you could use the examplary data provided in `conp/input/traj.*` stemming from a constant potential simulation of graphite electrodes at various applied electric potentials in contact with 1.5M BMIPF<sub>6</sub> in ACN.
+* Use the examplary data provided in `conp/input/traj.*` stemming from a constant potential simulation of graphite electrodes at various applied electric potentials in contact with 1.5M BMIPF<sub>6</sub> in ACN.
 * adapt simulation parameters in wham.in to account for specific needs and your simulation setup. a summary of all available settings is found in /wham/symdata.py
 * use flag `#linear = True` in the metafiles to activate a linear bias potential. This interprets the second column in the metafile paths definitions as an applied electrostatic potential.
 * run `wham.py -i conp/wham.in -o wham_output` to do the WHAM on the provided data.
