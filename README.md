@@ -15,7 +15,7 @@ __Disclaimer:__ _program in development_
 * These can be installed with `pip`
 
 ## `whampy` instructions
-The whampy" program computes the potential of mean force of an umbrella
+The whampy program computes the potential of mean force of an umbrella
 sampling simulation using a minimization of a log-likelihood function of
 the probability distribution in 1D. 
 
