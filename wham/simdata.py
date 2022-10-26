@@ -1,7 +1,10 @@
 #simdata.py contains the global variables for the simulation
 
 # Constants required for use
-k_B = 0.0019872041          # in kcal/mol
+k_B = 8.617333262e-5 # in eV/K
+
+# Bias parameters; could be moved to metafile?
+linear = False # linear bias potential; ignores spring constant
 
 # Parameters of the histograms
 hist_min = -180.0

@@ -15,6 +15,8 @@ from matplotlib import pyplot as plt
 
 
 def calc_bias(spring, loc, coor):
+    if sim.linear:
+        return -coor * loc
     dx = coor - loc
     if sim.periodic:
         period = sim.period

@@ -14,14 +14,15 @@ from wham.init import update_progress
 class Window:
     def __init__(self, *args):
 
-        if len(args)<3 or len(args)>5:
+        if len(args)<2 or len(args)>5:
             raise IndexError("Wrong number of arguments for Window object")
 
+        if len(args)==2 : args += (1, 1, sim.temp)
         if len(args)==3 : args += (1, sim.temp)
         if len(args)==4 : args += (sim.temp, )
 
         [path, loc, spring, correl_time, temp] = args[:5]
-        
+
         self.path = path
         self.loc = float(loc)
         self.spring = float(spring)
@@ -59,14 +60,19 @@ def startup(metafile):
                 simdata.update({vals[1]: vals[3]})
 
     for key, val in simdata.items():
-        if key == "hist_min" : sim.hist_min = val 
-        if key == "hist_max" : sim.hist_max = val 
-        if key == "num_bins" : sim.num_bins = int(val) 
-        if key == "temp" : sim.temp = val 
-        if key == "tol" : sim.tol = val 
-        if key == "first" : sim.first = int(val) 
-        if key == "last" : sim.last = int(val) 
-        if key == "num_mc_runs" : sim.num_mc_runs = int(val) 
+        if key == "k_B" : sim.k_B = val
+        if key == "hist_min" : sim.hist_min = val
+        if key == "hist_max" : sim.hist_max = val
+        if key == "num_bins" : sim.num_bins = int(val)
+        if key == "temp" : sim.temp = val
+        if key == "tol" : sim.tol = val
+        if key == "first" : sim.first = int(val)
+        if key == "last" : sim.last = int(val)
+        if key == "num_mc_runs" : sim.num_mc_runs = int(val)
+        if key == "linear" :
+            if val == "True": sim.linear = True
+            elif val == "False": sim.linear = False
+            else: raise IndexError("Wrong linear argument")
 
     if simdata.get('period'):
         sim.periodic = True
@@ -77,8 +83,8 @@ def startup(metafile):
 
     print("\tDone")
 
-    simdata.update({'bin_width': sim.bin_width, 
-                    'kT': sim.kT, 
+    simdata.update({'bin_width': sim.bin_width,
+                    'kT': sim.kT,
                     'periodic': sim.periodic})
 
     for key, val in simdata.items():
@@ -120,8 +126,9 @@ def read_data(windows):
         sys.stdout.log.write(string.format(i+1,sim.num_windows))
         window = windows[i]
         window.traj = np.loadtxt(window.path)[int(sim.first):,-1]
-        string = "\tTrajectory contains {0} points\n"
-        sys.stdout.log.write(string.format(len(window.traj)))
+        string = "\tTrajectory contains {0} points in the range between {1} and {2}\n"
+        sys.stdout.log.write(string.format(len(window.traj), window.traj.min(), 
+                                           window.traj.max()))
         window.hist[:,0] = data[:,0]
         window.hist[:,1] = np.histogram(window.traj,
                                         bins=sim.num_bins,
