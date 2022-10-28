@@ -5,13 +5,23 @@ free energy as a function of g=ln(f).
 """
 
 import re
-import sys
 import time
 import numpy as np
 import wham.simdata as sim
 from wham.init import update_progress
 from scipy import optimize
 from matplotlib import pyplot as plt
+
+
+def outer_calc_bias(spring, loc, coor):
+    if sim.linear:
+        return -np.outer(coor, loc)
+    dx = np.add.outer(coor, -loc)
+    if sim.periodic:
+        period = sim.period
+        dx = np.abs(dx)
+        dx = np.where(dx > (period / 2.0), dx - period, dx)
+    return 0.5 * spring * np.square(dx)
 
 
 def calc_bias(spring, loc, coor):
@@ -41,15 +51,15 @@ def function_A(g, *args):
     first = np.dot(num_points, g)
     second = 0.0
 
-    for l in range(num_bins):
-        coor = data[l, 0]
-        Ml = data[l, 1]
-        if Ml > 0:
-            bias = calc_bias(spring, loc, coor)
-            denom = np.dot(num_points, np.exp(-bias / kT + g))
-            second += Ml * np.log(Ml / denom)
+    assert data.shape[0] == num_bins
 
-    val = (first + second) * -1
+    Ml = data[:, 1]
+    bias = outer_calc_bias(spring, loc, data[:, 0])[Ml > 0, :]
+    Ml = data[:, 1][Ml > 0]
+    denom = np.dot(np.exp(-bias / kT + g), num_points)
+    second = np.sum(Ml * np.log(Ml / denom))
+
+    val = -(first + second)
     return val
 
 
@@ -69,15 +79,11 @@ def gradient_A(g, *args):
     spring = np.array([winlist[i].spring for i in range(num_windows)])
     num_points = np.array([winlist[i].num_points for i in range(num_windows)])
 
-    for l in range(num_bins):
-        bias = calc_bias(spring, loc, data[l, 0])
-        denom[l] = np.dot(num_points, np.exp(-bias / kT + g))
+    bias = outer_calc_bias(spring, loc, data[:, 0])
+    denom = np.dot(np.exp(-bias / kT + g), num_points)
 
-    denom = np.array(denom)
-    for i in range(num_windows):
-        bias = calc_bias(winlist[i].spring, winlist[i].loc, data[:, 0])
-        summat = np.dot(data[:, 1], np.exp(-bias / kT) / denom)
-        grad_A[i] = winlist[i].num_points * (np.exp(g[i]) * summat - 1)
+    summat = np.dot((np.exp(-bias / kT).T) / denom, data[:, 1])
+    grad_A = num_points * (np.exp(g) * summat - 1)
 
     return grad_A
 

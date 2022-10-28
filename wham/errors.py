@@ -33,7 +33,6 @@ def mc_error_analysis(windows, data):
 
     update_progress("MC_error_analysis", 0)
     for i in range(num_mc_runs):
-        mc_start = time.time()
         fakeset = []
         fakedata = np.zeros([num_bins, 4])
         fakedata[:, 0] = data[:, 0]
@@ -70,7 +69,6 @@ def mc_error_analysis(windows, data):
         # store each bootstrap result
         bootstrapfile.write(" ".join(map(str, fakedata[:, 3])) + "\n")
         update_progress("MC error analysis", (i + 1) / num_mc_runs)
-        print("### mc time:", time.time() - mc_start)
 
     ave_p /= num_mc_runs
     ave_pdf /= num_mc_runs
