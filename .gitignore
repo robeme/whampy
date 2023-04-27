@@ -1,0 +1,5 @@
+*.hist
+*.log
+*.prob
+*.pmf
+__pycache__/
